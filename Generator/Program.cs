@@ -177,7 +177,7 @@ internal static class Program
         var skip = 0;
         while (true)
         {
-            var resp = await GetUnityReleasesAsync(600, skip);
+            var resp = await GetUnityReleasesAsync(300, skip);
 
             foreach (var edge in resp.Data.GetUnityReleases.Edges)
             {
@@ -221,7 +221,7 @@ internal static class Program
                 ["limit"] = limit,
                 ["skip"] = skip
             },
-            ["query"] = "query GetRelease($limit: Int, $skip: Int) { getUnityReleases(limit: $limit, skip: $skip, entitlements: [XLTS]) { pageInfo { hasNextPage }, edges { node { version, shortRevision } } __typename } __typename }"
+            ["query"] = "query GetRelease($limit: Int, $skip: Int) { getUnityReleases(limit: $limit, skip: $skip, entitlements: [XLTS]) { pageInfo { hasNextPage }, edges { node { version, shortRevision } } } }"
         };
 
         var resp = await http.PostAsync("https://services.unity.com/graphql", new StringContent(body.ToJsonString(), MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
