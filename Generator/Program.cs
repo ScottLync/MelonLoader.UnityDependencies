@@ -26,7 +26,7 @@ internal static class Program
     {
         if (args.Length < 3)
         {
-            throw new ArgumentException("The generator requires the following arguments: Repo Owner, Repo Name, Main Branch Name");
+            throw new ArgumentException("The generator requires the following arguments: Repo Owner, Repo Name, Main Branch Name\nUsage example:\nGenerator.exe ScottLync MelonLoader.UnityDependencies main");
         }
         
         repoOwner = args[0];
@@ -94,21 +94,18 @@ internal static class Program
                 await using (var fileStr = File.Create(pkgPath))
                     await resp.Content.CopyToAsync(fileStr);
             }
-            
-            Console.WriteLine("Extracting the Payload Archive");
-            await SevenZip.ExtractAsync(pkgPath, tempDir, false, "TargetSupport.pkg.tmp/Payload");
+
+            Console.WriteLine("Extracting Archive");
+            await SevenZip.ExtractAsync(pkgPath, tempDir, true);
             File.Delete(pkgPath);
-            
-            var payloadArchPath = Path.Combine(tempDir, "Payload");
-            Console.WriteLine("Extracting the Payload Archive Archive");
-            await SevenZip.ExtractAsync(payloadArchPath, tempDir, false);
-            File.Delete(payloadArchPath);
-            
+
             var payloadPath = Path.Combine(tempDir, "Payload~");
-            Console.WriteLine("Extracting the last one...");
-            await SevenZip.ExtractAsync(payloadPath, tempDir, true, "./Variations/il2cpp/Managed/*", "./Variations/il2cpp/Release/Libs/*");
+            Console.WriteLine("Extracting Payload~");
+            await SevenZip.ExtractAsync(payloadPath, tempDir, true,
+                "./Variations/il2cpp/Managed/*",
+                "./Variations/il2cpp/Release/Libs/*");
             File.Delete(payloadPath);
-            
+
             var managedDir = Path.Combine(tempDir, "Variations", "il2cpp", "Managed");
             var libsDir = Path.Combine(tempDir, "Variations", "il2cpp", "Release", "Libs");
             
